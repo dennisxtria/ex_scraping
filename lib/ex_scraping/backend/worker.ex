@@ -1,14 +1,12 @@
 defmodule ExScraping.Backend.Worker do
   @moduledoc false
 
-  use GenServer
-
   alias __MODULE__
   alias ExScraping.API.Telegram
   alias ExScraping.Backend.Advertisements
   alias ExScraping.Config
 
-  use ExScraping.Backend.Logger
+  use GenServer
 
   @frequency Config.frequency()
 
@@ -29,18 +27,18 @@ defmodule ExScraping.Backend.Worker do
 
   @impl true
   def handle_info(:update, %{class: class, latest_ads: older_ads} = state) do
-    result =
-      with {:ok, latest_ads} <- Advertisements.get_latest(class),
-           filtered_latest_ads = :lists.subtract(latest_ads, older_ads) do
-        {:noreply, %{state | latest_ads: :lists.append(older_ads, filtered_latest_ads)}}
-      else
-        [{:error, reason}] ->
-          inspect(reason)
-          {:noreply, state}
-      end
+    {_result, new_filtered_ads} =
+      message =
+      class
+      |> Advertisements.get_new()
+      |> filter(older_ads)
 
-    IO.inspect(result, label: :result)
-    Telegram.send(result)
+    Telegram.send(message)
     Process.send_after(self(), :update, @frequency)
+    {:noreply, %{state | latest_ads: :lists.append(older_ads, new_filtered_ads)}}
   end
+
+  defp filter([{:error, _} = h | _], _older_ads), do: {h, []}
+
+  defp filter(latest_ads, older_ads), do: {:ok, :lists.subtract(latest_ads, older_ads)}
 end

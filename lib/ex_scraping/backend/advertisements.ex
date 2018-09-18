@@ -5,26 +5,26 @@ defmodule ExScraping.Backend.Advertisements do
 
   @url Config.url()
 
-  @spec get_latest(class :: atom) :: [String.t()]
-  def get_latest(class) do
+  @spec get_new(class :: atom) :: [String.t()]
+  def get_new(class) do
     base_url = Config.base_url(class)
     params = Config.params(class)
 
     params
-    |> Enum.map(fn {_, v} -> do_get_latest(base_url, v) end)
+    |> Enum.map(fn {_, v} -> do_get_new(base_url, v) end)
     |> List.flatten()
   end
 
-  defp do_get_latest(base_url, params) do
+  defp do_get_new(base_url, params) do
     response = HTTPoison.get(base_url, [], params: params)
 
     with {:ok, body} <- get_body(response),
          links = get_href(body),
          false <- Enum.empty?(links) do
-      {:ok, Enum.map(links, fn link -> @url <> link end)}
+      Enum.map(links, fn link -> @url <> link end)
     else
       {:error, _} = error -> error
-      true -> {:error, {:floki, :empty_attribute_list}}
+      true -> {:error, :floki_empty_list}
     end
   end
 
@@ -33,7 +33,7 @@ defmodule ExScraping.Backend.Advertisements do
   end
 
   defp get_body({:ok, %HTTPoison.Response{status_code: status_code}}) do
-    {:error, {:wrong_status_code, status_code}}
+    {:error, status_code}
   end
 
   defp get_body({:error, %HTTPoison.Error{reason: reason}}) do
