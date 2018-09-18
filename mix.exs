@@ -23,8 +23,8 @@ defmodule ExScraping.MixProject do
       {:credo, "~> 0.10.1"},
       {:dialyxir, "~> 0.5.1"},
       {:floki, "~> 0.20.3"},
-      {:httpoison, "~> 1.1.1"},
-      {:nadia, "~> 0.4.4"}
+      {:httpoison, "~> 1.3"},
+      {:nadia, github: "dennisxtria/nadia"}
     ]
   end
 end

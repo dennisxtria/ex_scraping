@@ -15,26 +15,34 @@ defmodule ExScraping.Backend.Advertisements do
     |> List.flatten()
   end
 
-  defp do_get_latest(base_url, vendor) do
-    base_url
-    |> get_body(vendor)
-    |> parse()
-    |> create_links()
+  defp do_get_latest(base_url, params) do
+    response = HTTPoison.get(base_url, [], params: params)
+
+    with {:ok, body} <- get_body(response),
+         links = get_href(body),
+         false <- Enum.empty?(links) do
+      {:ok, Enum.map(links, fn link -> @url <> link end)}
+    else
+      {:error, _} = error -> error
+      true -> {:error, {:floki, :empty_attribute_list}}
+    end
   end
 
-  defp get_body(base_url, params) do
-    {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(base_url, [], params: params)
-
-    body
+  defp get_body({:ok, %HTTPoison.Response{body: body, status_code: 200}}) do
+    {:ok, body}
   end
 
-  defp parse(body) do
+  defp get_body({:ok, %HTTPoison.Response{status_code: status_code}}) do
+    {:error, {:wrong_status_code, status_code}}
+  end
+
+  defp get_body({:error, %HTTPoison.Error{reason: reason}}) do
+    {:error, reason}
+  end
+
+  defp get_href(body) do
     body
     |> Floki.find("[class~=list-group-item]")
     |> Floki.attribute("href")
-  end
-
-  defp create_links(links) do
-    Enum.map(links, fn link -> @url <> link end)
   end
 end
