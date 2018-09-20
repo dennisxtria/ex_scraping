@@ -35,6 +35,6 @@ defmodule ExScraping.Config do
   @spec frequency :: pos_integer
   def frequency, do: get_env(@app, :frequency, nil)
 
-  @spec telegram_token :: String.t()
-  def telegram_token, do: get_env(:nadia, :token, nil)
+  @spec user_id :: pos_integer
+  def user_id, do: get_env(@app, :user_id, nil)
 end
