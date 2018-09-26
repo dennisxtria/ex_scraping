@@ -20,9 +20,9 @@ defmodule ExScraping.MixProject do
 
   defp deps do
     [
-      {:credo, "~> 0.10.1"},
+      {:credo, "~> 0.10.2"},
       {:dialyxir, "~> 0.5.1"},
-      {:floki, "~> 0.20.3"},
+      {:floki, "~> 0.20.4"},
       {:httpoison, "~> 1.3"},
       {:nadia, github: "dennisxtria/nadia"}
     ]

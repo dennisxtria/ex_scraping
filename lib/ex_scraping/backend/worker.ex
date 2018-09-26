@@ -3,7 +3,7 @@ defmodule ExScraping.Backend.Worker do
 
   alias __MODULE__
   alias ExScraping.API.Telegram
-  alias ExScraping.Backend.Advertisements
+  alias ExScraping.Backend.Ads
   alias ExScraping.Config
 
   use GenServer
@@ -30,10 +30,11 @@ defmodule ExScraping.Backend.Worker do
     {_result, new_filtered_ads} =
       message =
       class
-      |> Advertisements.get_new()
-      |> filter(older_ads)
+      |> Ads.get_new()
+      |> IO.inspect(label: :all_ads_mofo)
+    #   |> filter(older_ads)
 
-    Telegram.send(message)
+    # Telegram.send(message)
     Process.send_after(self(), :update, @frequency)
     {:noreply, %{state | latest_ads: :lists.append(older_ads, new_filtered_ads)}}
   end

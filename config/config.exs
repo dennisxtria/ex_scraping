@@ -4,15 +4,19 @@ app = Mix.Project.config()[:app]
 
 config app, :car_gr,
   url: "https://www.car.gr",
+  intermediate_url_motorrad: "/classifieds/bikes/",
+  intermediate_url_car: "/classifieds/cars/",
   motorrad_filters: %{
     "fs" => "1",
     "condition" => "used",
-    "offer_type" => "sale",
-    "price-with" => ">50",
-    "price-to" => "<6000",
-    "registration-from" => ">2008",
     "mileage-from" => ">500",
     "mileage-to" => "<40000",
+    "offer_type" => "sale",
+    "onlyprice" => "1",
+    "pg" => "1",
+    "price" => ">50",
+    "price-to" => "<6000",
+    "registration-from" => ">2008",
     "significant_damage" => "f",
     "rg" => "3",
     "hi" => "1"

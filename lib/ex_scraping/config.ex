@@ -10,10 +10,15 @@ defmodule ExScraping.Config do
   @spec url :: String.t()
   def url, do: get_env(@app, :car_gr, nil)[:url]
 
-  @spec base_url(class :: atom) :: String.t()
-  def base_url(:motorrad), do: url() <> "/classifieds/bikes/"
+  @spec intermediate_url(class :: atom) :: String.t()
+  def intermediate_url(:motorrad), do: get_env(@app, :car_gr, nil)[:intermediate_url_motorrad]
 
-  def base_url(:car), do: url() <> "/classifieds/cars/"
+  def intermediate_url(:car), do: get_env(@app, :car_gr, nil)[:intermediate_url_car]
+
+  @spec base_url(class :: atom) :: String.t()
+  def base_url(:motorrad), do: url() <> intermediate_url(:motorrad)
+
+  def base_url(:car), do: url() <> intermediate_url(:car)
 
   @spec filters(class :: atom) :: filters
   def filters(:motorrad), do: get_env(@app, :car_gr, nil)[:motorrad_filters]
