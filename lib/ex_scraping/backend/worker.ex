@@ -17,7 +17,7 @@ defmodule ExScraping.Backend.Worker do
 
   @impl true
   def init([class]) do
-    state = %{class: class, latest_ads: []}
+    state = %{class: class, latest_ads: %{}}
     update()
     {:ok, state}
   end
@@ -32,7 +32,7 @@ defmodule ExScraping.Backend.Worker do
       class
       |> Ads.get_new()
       |> IO.inspect(label: :all_ads_mofo)
-    #   |> filter(older_ads)
+      |> filter(older_ads)
 
     # Telegram.send(message)
     Process.send_after(self(), :update, @frequency)
@@ -41,5 +41,17 @@ defmodule ExScraping.Backend.Worker do
 
   defp filter([{:error, _} = h | _], _older_ads), do: {h, []}
 
-  defp filter(latest_ads, older_ads), do: {:ok, :lists.subtract(latest_ads, older_ads)}
+  defp filter(latest_ads, older_ads) do
+    # {:ok, :lists.subtract(latest_ads, older_ads)}
+    case MapDiff.diff(older_ads, latest_ads) do
+      %{changed: :equal} -> {:ok, latest_ads}
+      %{changed: :map_change, value: value} -> get_diff(value)
+    end
+  end
+
+  defp get_diff(value) do
+    value
+    |> Enum.filter(fn {_k, v} -> v[:changed] != :equal end)
+    |> Enum.reduce(%{}, fn {k, v}, acc -> Map.put(acc, k, v[:value]) end)
+  end
 end

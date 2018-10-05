@@ -13,7 +13,6 @@ defmodule ExScraping.Backend.Parse do
 
     hits
     |> String.to_integer()
-    |> IO.inspect(label: :hits)
     |> check_findings
   end
 

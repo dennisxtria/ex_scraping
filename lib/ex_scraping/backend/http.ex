@@ -30,7 +30,7 @@ defmodule ExScraping.Backend.HTTP do
             with {:ok, body} <- get_body(response),
                  {:ok, links} <- ad_links(body) do
               next_page_ads = create_links(links)
-              :lists.append(first_page_ads, next_page_ads)
+              Map.merge(first_page_ads, next_page_ads)
             end
           end)
       end
@@ -52,6 +52,14 @@ defmodule ExScraping.Backend.HTTP do
   end
 
   defp create_links(links) do
-    Enum.map(links, fn link -> @url <> link end)
+    links
+    |> Enum.reduce(%{}, fn link, acc -> Map.put(acc, create_link_ids(link), @url <> link) end)
+  end
+
+  defp create_link_ids(link) do
+    link
+    |> String.trim_leading("/")
+    |> String.split("-")
+    |> List.first()
   end
 end

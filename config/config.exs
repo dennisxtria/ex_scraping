@@ -9,34 +9,36 @@ config app, :car_gr,
   motorrad_filters: %{
     "fs" => "1",
     "condition" => "used",
-    "mileage-from" => ">500",
-    "mileage-to" => "<40000",
     "offer_type" => "sale",
     "onlyprice" => "1",
-    "pg" => "1",
     "price" => ">50",
     "price-to" => "<6000",
     "registration-from" => ">2008",
+    "mileage-from" => ">500",
+    "mileage-to" => "<40000",
     "significant_damage" => "f",
     "rg" => "3",
-    "hi" => "1"
+    "hi" => "1",
+    "st" => "private",
+    "pg" => "1"
   },
   car_filters: %{
     "fs" => "1",
     "condition" => "used",
     "offer_type" => "sale",
-    "price-with" => ">50",
-    "price-from" => ">3000",
-    "price-to" => "<5000",
-    "registration-from" => ">2005",
-    "mileage-to" => "<125000",
-    "engine_size-from" => ">1000",
-    "engine_size-to" => "<1300",
+    "onlyprice" => "1",
+    "price" => ">50",
+    "price-to" => "<13000",
+    "registration-from" => ">2008",
+    "mileage-from" => ">500",
+    "mileage-to" => "<100000",
+    "engine_size-to" => "<1600",
+    "engine_power-from" => ">150",
     "significant_damage" => "f",
     "rg" => "3",
-    "modified" => "3",
     "hi" => "1",
-    "st" => "private"
+    "st" => "private",
+    "pg" => "1"
   }
 
 config app, :vendors,
@@ -44,10 +46,7 @@ config app, :vendors,
     suzuki_vstrom: %{"make" => "242", "model" => "4462"}
   },
   car: %{
-    ford_fiesta: %{"make" => "126", "model" => "177"},
-    honda_jazz: %{"make" => "22", "model" => "714"},
-    mitsubishi_colt: %{"make" => "198", "model" => "542"},
-    toyota_yaris: %{"make" => "248", "model" => "820"}
+    vw_scirocco: %{"make" => "251", "model" => "840"}
   }
 
 import_config "#{Mix.env()}.exs"
